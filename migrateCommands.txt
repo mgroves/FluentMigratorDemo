@@ -1,0 +1,37 @@
+## docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=yourStrong(!)Password" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+
+## Server=localhost;Database=FluentMigratorDemoDb;Trusted_Connection=True;
+
+## make sure command line tool installed
+
+dotnet tool install -g FluentMigrator.DotNet.Cli
+
+## open terminal and do this
+
+cd .\FluentMigratorDemo.Migrations\bin\Debug\net7.0\
+
+## list migrations:
+
+dotnet-fm list migrations -p SQLite --no-connection -a FluentMigratorDemo.Migrations.dll
+
+## output to sql file:
+
+dotnet-fm migrate -c="Data Source=invoices.db" -p SQLite --output=migration.sql -a FluentMigratorDemo.Migrations.dll --preview
+
+## output EVERYTHING to sql file:
+
+dotnet-fm migrate --no-connection -p SQLite --output=migration_all.sql -a FluentMigratorDemo.Migrations.dll --preview
+
+## migrate the database all the way up
+
+dotnet-fm migrate -c="Data Source=invoices.db;foreign keys=true;" -p SQLite -a FluentMigratorDemo.Migrations.dll
+
+dotnet-fm migrate -c="Server=localhost;Database=fluentMigratorDemoDb;Trusted_Connection=True;" -p SqlServer -a FluentMigratorDemo.Migrations.dll
+
+## rollback last migration
+
+dotnet-fm rollback -p SQLite -c="Data Source=invoices.db" -a FluentMigratorDemo.Migrations.dll
+
+## rollback everything
+
+dotnet-fm rollback -p SqlServer -c="Server=localhost;Database=fluentMigratorDemoDb;Trusted_Connection=True;" -a FluentMigratorDemo.Migrations.dll all

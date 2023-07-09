@@ -1,6 +1,14 @@
-## docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=yourStrong(!)Password" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+## these are the commands I use for the demo
 
-## Server=localhost;Database=FluentMigratorDemoDb;Trusted_Connection=True;
+## running sql server
+
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=yourStrong(!)Password" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+
+## create a FluentMigratorDemoDb in it
+
+## connection string
+
+Server=localhost;Database=FluentMigratorDemoDb;user id=sa;password=yourStrong(!)Password;
 
 ## make sure command line tool installed
 
@@ -8,7 +16,7 @@ dotnet tool install -g FluentMigrator.DotNet.Cli
 
 ## open terminal and do this
 
-cd .\FluentMigratorDemo.Migrations\bin\Debug\net7.0\
+cd .\FluentMigratorDemo.Migrations\bin\Debug\netstandard2.0\
 
 ## list migrations:
 
@@ -16,7 +24,7 @@ dotnet-fm list migrations -p SQLite --no-connection -a FluentMigratorDemo.Migrat
 
 ## output to sql file:
 
-dotnet-fm migrate -c="Data Source=invoices.db" -p SQLite --output=migration.sql -a FluentMigratorDemo.Migrations.dll --preview
+dotnet-fm migrate -c="Data Source=invoices.db;foreign keys=true" -p SQLite --output=migration.sql -a FluentMigratorDemo.Migrations.dll --preview
 
 ## output EVERYTHING to sql file:
 
@@ -26,7 +34,9 @@ dotnet-fm migrate --no-connection -p SQLite --output=migration_all.sql -a Fluent
 
 dotnet-fm migrate -c="Data Source=invoices.db;foreign keys=true;" -p SQLite -a FluentMigratorDemo.Migrations.dll
 
-dotnet-fm migrate -c="Server=localhost;Database=fluentMigratorDemoDb;Trusted_Connection=True;" -p SqlServer -a FluentMigratorDemo.Migrations.dll
+dotnet-fm migrate -c="Server=localhost;Database=FluentMigratorDemoDb;user id=sa;password=yourStrong(!)Password;" -p SqlServer -a FluentMigratorDemo.Migrations.dll
+
+## Make sure to cover the VersionInfo table!
 
 ## rollback last migration
 
@@ -34,4 +44,4 @@ dotnet-fm rollback -p SQLite -c="Data Source=invoices.db" -a FluentMigratorDemo.
 
 ## rollback everything
 
-dotnet-fm rollback -p SqlServer -c="Server=localhost;Database=fluentMigratorDemoDb;Trusted_Connection=True;" -a FluentMigratorDemo.Migrations.dll all
+dotnet-fm rollback -p SqlServer -c="Server=localhost;Database=FluentMigratorDemoDb;user id=sa;password=yourStrong(!)Password;" -a FluentMigratorDemo.Migrations.dll all
